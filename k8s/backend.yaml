@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: backend, namespace: ecotrack}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: backend}}
+  template:
+    metadata: {labels: {app: backend}}
+    spec:
+      containers:
+      - name: backend
+        image: ecotrack/backend:latest
+        env:
+        - {name: DATABASE_URL, value: postgresql+psycopg://ecotrack:ecotrack@postgres:5432/ecotrack}
+        - {name: SECRET_KEY, value: change-this-in-production}
+        ports: [{containerPort: 8000}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: backend, namespace: ecotrack}
+spec: {selector: {app: backend}, ports: [{port: 8000}]}
